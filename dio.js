@@ -1,87 +1,91 @@
-let nome = "Luis Martins"; // Nome do herói
-let bat = 1; // Contador de batalhas, começando pela primeira batalha
-let xpTotal = 0; // Experiência total do herói, começando em 0
-let rank; // Variável que armazenará o rank do herói
-let xp; // Experiência ganha em cada batalha
-let level = 0; // Nível do herói, inicializado em 0
-let dificuldadeParaEvoluir = 100; // Padrão inicial de dificuldade para subir de nível
-const nivelMaximo = 100; // Definindo o nível máximo
+let nome = "Luis Martins"  // Nome do herói
+let bat = 1  // Contador de batalhas
+let xpTotal = 0  // Experiência total acumulada
+let xpAtual = 0  // Experiência disponível para evoluir
+let rank  // Variável que armazenará o rank do herói
+let xp  // Experiência ganha em cada batalha
+let level = 0  // Nível do herói, inicializado em 0
+const nivelMaximo = 100  // Definindo o nível máximo
 
-// Função para calcular o rank com base no nível do herói
-function calcularRank(level) {
-    if (level >= 1 && level <= 10) {
-        return "Ferro";
-    } else if (level >= 11 && level <= 20) {
-        return "Bronze";
-    } else if (level >= 21 && level <= 35) {
-        return "Prata";
-    } else if (level >= 36 && level <= 50) {
-        return "Ouro";
-    } else if (level >= 51 && level <= 65) {
-        return "Platina";
-    } else if (level >= 66 && level <= 80) {
-        return "Ascendente";
-    } else if (level >= 81 && level <= 90) {
-        return "Imortal";
-    } else {
-        return "Radiante"; // Rank máximo
-    }
+// Função para calcular a dificuldade 
+function dificuldadeParaEvoluir(level) {
+    return Math.ceil(Math.log(level + 1) / Math.log(3)) * 100  // Multiplica por 100 para manter a dificuldade em uma escala maior
 }
 
 // O loop 'while' vai continuar até que o herói atinja o nível máximo
 while (level < nivelMaximo) {
-    // Gera um número aleatório de experiência entre 100 e 700 para cada batalha
-    xp = Math.floor(Math.random() * 601) + 100;
-    
-    // Adiciona a experiência da batalha atual ao total de experiência
-    xpTotal += xp;
-    
-    // Calcula o nível do herói com base na experiência total e na dificuldade para evoluir
-    if (xpTotal >= dificuldadeParaEvoluir) {
-        level++;
-        xpTotal -= dificuldadeParaEvoluir; // Subtrai a experiência usada para o próximo nível
+    // Gera um número aleatório de experiência entre 100 e 200 por batalha
+    xp = Math.floor(Math.random() * 101) + 100
+    // Adiciona a experiência da batalha ao total acumulado e à experiência disponível
+    xpTotal += xp
+    xpAtual += xp
+
+    // Calcula o nível do herói com base na experiência atual e a dificuldade para evoluir
+    while (xpAtual >= dificuldadeParaEvoluir(level)) {
+        xpAtual -= dificuldadeParaEvoluir(level) // Subtrai a experiência usada para subir de nível
+        level++  // Sobe de nível
+
+        // Atualiza o rank do herói conforme o nível
+        switch (true) {
+            case (level >= 100):
+                rank = "Radiante"
+                break
+            case (level >= 81):
+                rank = "Imortal"
+                break
+            case (level >= 66):
+                rank = "Ascendente"
+                break
+            case (level >= 51):
+                rank = "Platina"
+                break
+            case (level >= 36):
+                rank = "Ouro"
+                break
+            case (level >= 21):
+                rank = "Prata"
+                break
+            case (level >= 11):
+                rank = "Bronze"
+                break
+            case (level <= 10):
+                rank = "Ferro"
+                break
+        }
     }
-    
-    // Atualiza o rank com base no nível
-    rank = calcularRank(level);
-    
-    // Aumenta a dificuldade para evoluir usando uma progressão mais suave (level * 10)
-    dificuldadeParaEvoluir = 100 + (level * 10);
 
     // Exibe o resumo da batalha atual e o status atualizado do herói
-    const mensagem = `
-==================== RESUMO DO HERÓI ====================
-
+    const mensagem = `==================== RESUMO DO HERÓI ====================
 Herói: ${nome}
 
-Resumo da Batalha:
-${bat}
+Resumo da Batalha #${bat}
 
 Ganhou: ${xp} pontos de experiência
+
 Level atual: ${level}
-Experiência total acumulada: ${xpTotal}
+
+XP acumulado durante a jornada: ${xpTotal}
+
+XP atual disponível: ${xpAtual}
+
 Rank atual: ${rank}
 
-Próximo nível requer: ${dificuldadeParaEvoluir} pontos de experiência
-
-=========================================================
-`;
-
+Próximo nível requer: ${dificuldadeParaEvoluir(level)} pontos de experiência
+=========================================================`
+    
     // Exibe a mensagem no console
-    console.log(mensagem);
-
+    console.log(mensagem)
+    
     // Incrementa o contador de batalhas
-    bat++;
+    bat++
     
     // Verifica se o nível máximo foi atingido
     if (level >= nivelMaximo) {
-        console.log(`
-==================== FIM DA JORNADA ====================
-
+        console.log(`==================== FIM DA JORNADA ====================
 Parabéns! ${nome} atingiu o nível máximo (${nivelMaximo}) e o rank ${rank}!
-
-=========================================================
-`);
-        break; // Sai do loop quando o nível máximo é alcançado
+Seu xp total durante a jornada foi de ${xpTotal}, com ${xpAtual} de xp extra.
+Obrigado por jogar!
+=========================================================`)
+        break  // Sai do loop quando o nível máximo é alcançado
     }
 }
